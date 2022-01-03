@@ -4,6 +4,7 @@ import 'package:flutter_mvvm_archi/presentation/login/login.dart';
 import 'package:flutter_mvvm_archi/presentation/main/main_view.dart';
 import 'package:flutter_mvvm_archi/presentation/onboarding/onboarding.dart';
 import 'package:flutter_mvvm_archi/presentation/register/register.dart';
+import 'package:flutter_mvvm_archi/presentation/resources/strings_manager.dart';
 import 'package:flutter_mvvm_archi/presentation/splash/splash.dart';
 import 'package:flutter_mvvm_archi/presentation/store_details/store_details.dart';
 
@@ -43,10 +44,10 @@ class RouteGenerator {
     return MaterialPageRoute(
         builder: (_) => Scaffold(
               appBar: AppBar(
-                title: const Text('No Route Found'),
+                title: const Text(AppStrings.noRouteFound),
               ),
               body: const Center(
-                child: Text('No Route Found'),
+                child: Text(AppStrings.noRouteFound),
               ),
             ));
   }
