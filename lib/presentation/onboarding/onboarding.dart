@@ -18,7 +18,8 @@ class _OnBoardingViewState extends State<OnBoardingView> {
 
   final PageController _pageController = PageController(initialPage: 0);
 
-  List<SliderObject> _getSliderData() => [
+  List<SliderObject> _getSliderData() =>
+      [
         SliderObject(AppStrings.onBoardTitle1, AppStrings.onBoardSubTitle1,
             ImageAssets.onBoardingLogo1),
         SliderObject(AppStrings.onBoardTitle2, AppStrings.onBoardSubTitle2,
@@ -32,9 +33,10 @@ class _OnBoardingViewState extends State<OnBoardingView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorManager.darkPrimary,
+      backgroundColor: ColorManager.white,
       appBar: AppBar(
-        elevation: AppSize.s1_5,
+        backgroundColor: ColorManager.white,
+        elevation: AppSize.s0,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: ColorManager.white,
           statusBarBrightness: Brightness.dark,
@@ -44,14 +46,169 @@ class _OnBoardingViewState extends State<OnBoardingView> {
       body: PageView.builder(
           controller: _pageController,
           itemCount: _list.length,
-          onPageChanged: (index){
+          onPageChanged: (index) {
             setState(() {
               _currentIndex = index;
             });
           },
-          itemBuilder: (context, index){
-            return Container();
+          itemBuilder: (context, index) {
+            return OnBoardingPage(_list[index]);
           }),
+      bottomSheet: Container(
+        color: ColorManager.white,
+        height: AppSize.s100 + MediaQuery.of(context).padding.bottom,
+        child: Column(
+          children: [
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    AppStrings.skip,
+                    style: Theme.of(context).textTheme.subtitle1,
+                    textAlign: TextAlign.end,
+                  )),
+            ),
+            // add layout for indicator and arrows
+            Container(
+              color: ColorManager.primary,
+              child: Column(
+                children: [
+                  _getBottomSheetWidget(),
+                  SizedBox(
+                    height: MediaQuery.of(context).padding.bottom,
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _getBottomSheetWidget() {
+    return Container(
+      color: ColorManager.primary,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(AppPadding.p14),
+            child: GestureDetector(
+              child: const SizedBox(
+                height: AppSize.s20,
+                width: AppSize.s20,
+                child: Icon(Icons.chevron_left, color: Colors.white,),
+              ),
+              onTap: () {
+                _pageController.animateToPage(_getPreviousIndex(),
+                    duration: const Duration(milliseconds: DurationConstant.d300),
+                    curve: Curves.bounceInOut);
+              },
+            ),
+          ),
+          // circle indicators
+
+          Row(
+            children: [
+              for(int i = 0; i < _list.length; i++)
+                Padding(
+                  padding: const EdgeInsets.all(AppPadding.p8),
+                  child: _getPropertiesCircle(i),
+                )
+            ],
+          ),
+
+          Padding(
+            padding: const EdgeInsets.all(AppPadding.p14),
+            child: GestureDetector(
+              child: const SizedBox(
+                height: AppSize.s20,
+                width: AppSize.s20,
+                child: Icon(Icons.chevron_right, color: Colors.white,),
+              ),
+              onTap: (){
+                _pageController.animateToPage(_getNextIndex(),
+                    duration: const Duration(milliseconds: DurationConstant.d300),
+                    curve: Curves.bounceInOut);
+              },
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  int _getPreviousIndex(){
+    int previousIndex = _currentIndex --;
+    if(previousIndex == -1){
+      _currentIndex = _list.length - 1;
+    }
+    return _currentIndex;
+  }
+
+  int _getNextIndex(){
+    int nextIndex = _currentIndex ++;
+    if(nextIndex >= _list.length){
+      _currentIndex = 0;
+    }
+    return _currentIndex;
+  }
+
+  Widget _getPropertiesCircle(int index) {
+    if (index == _currentIndex) {
+      return const Icon(Icons.add_circle_outline_rounded, color: Colors.white, size: 10,);
+    } else {
+      return const Icon(Icons.circle, color: Colors.white, size: 10,);
+    }
+  }
+}
+
+
+class OnBoardingPage extends StatelessWidget {
+  SliderObject _sliderObject;
+
+  OnBoardingPage(this._sliderObject, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        const SizedBox(
+          height: AppSize.s40,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(AppPadding.p8),
+          child: Text(
+            _sliderObject.title,
+            textAlign: TextAlign.center,
+            style: Theme
+                .of(context)
+                .textTheme
+                .headline1,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(AppPadding.p8),
+          child: Text(
+            _sliderObject.subtitle,
+            textAlign: TextAlign.center,
+            style: Theme
+                .of(context)
+                .textTheme
+                .subtitle1,
+          ),
+        ),
+        const SizedBox(
+          height: AppSize.s60,
+        ),
+        // Image Widget
+        Image(
+          image: AssetImage(_sliderObject.image),
+        )
+      ],
     );
   }
 }
